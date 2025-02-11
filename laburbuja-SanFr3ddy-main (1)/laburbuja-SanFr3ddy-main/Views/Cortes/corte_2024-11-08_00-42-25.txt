@@ -1,0 +1,34 @@
+CORTE DE CAJA - LAVANDERÍA LA BURBUJA
+Fecha de corte: 2024-11-08 00:42:25
+----------------------------------------
+
+ID     Cliente              Fecha               Total      Estado Pago     Estado Servicio
+-------------------------------------------------------------------------------------
+1      Freddy               2024-11-04 11:50:51 $9.00      pendiente       pendiente      
+2      Bryfu                2024-11-04 11:57:48 $150.00    pagado          pendiente      
+9      Samir                2024-11-05 09:29:55 $240.00    pagado          pendiente      
+10     Bryfu                2024-11-05 09:48:01 $150.00    pendiente       pendiente      
+11     Freddy               2024-11-05 09:54:39 $30.00     pendiente       pendiente      
+12     Samir                2024-11-05 11:59:31 $40.00     pendiente       pendiente      
+13     Freddy               2024-11-06 18:20:15 $30.00     pendiente       pendiente      
+14     Freddy               2024-11-06 18:20:15 $30.00     pendiente       pendiente      
+15     Freddy               2024-11-06 18:22:15 $30.00     pendiente       pendiente      
+16     Freddy               2024-11-06 18:22:15 $30.00     pendiente       pendiente      
+18     Freddy               2024-11-06 18:22:43 $30.00     pendiente       pendiente      
+17     Freddy               2024-11-06 18:22:43 $30.00     pendiente       pendiente      
+19     Freddy               2024-11-06 18:23:01 $30.00     pendiente       pendiente      
+20     Freddy               2024-11-06 18:23:01 $30.00     pendiente       pendiente      
+21     Freddy               2024-11-07 17:03:27 $30.00     pendiente       pendiente      
+22     Freddy               2024-11-07 17:03:27 $30.00     pendiente       pendiente      
+23     Freddy               2024-11-07 17:14:22 $30.00     pendiente       pendiente      
+24     Freddy               2024-11-07 17:14:22 $30.00     pendiente       pendiente      
+25     Samir                2024-11-07 17:22:37 $30.00     pendiente       pendiente      
+26     Samir                2024-11-07 17:22:37 $30.00     pendiente       pendiente      
+
+----------------------------------------
+RESUMEN DEL CORTE
+Total en Efectivo: $390.00
+Total Pendiente: $649.00
+Total General: $1,039.00
+----------------------------------------
+Corte realizado por: Freddy

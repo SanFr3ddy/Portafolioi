@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        if (password_verify($contraseña, $row['password'])) {
+        if (password_verify($contraseña, $row['contraseña'])) {
             $_SESSION['usuario'] = $usuario;
             $_SESSION['nombre'] = $row['nombre'];
             $_SESSION['rol'] = $row['rol'];
@@ -29,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $loginError = "Usuario no encontrado.";
     }
+    $stmt->close();
 }
 
 $conn->close();
@@ -47,7 +48,7 @@ $conn->close();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
     <link rel="stylesheet" href="../Css/Login.css">
-    <link rel="shortcut icon" href="../Views/Img/imagen_2024-08-19_080627485-removebg-preview (1).png" type="png">
+    <link rel="shortcut icon" href="../Img/imagen_2024-08-19_080627485-removebg-preview (1).png" type="png">
 </head>
 
 <body>

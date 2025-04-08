@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {
             if (!empty($new_password)) {
                 $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-                $sql = "UPDATE usuarios_listado SET nombre = ?, correo = ?, password = ?, rol = ? WHERE id = ?";
+                $sql = "UPDATE usuarios_listado SET nombre = ?, correo = ?, contraseña = ?, rol = ? WHERE id = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("ssssi", $nombre, $correo, $hashed_password, $rol, $id);
             } else {

@@ -130,7 +130,7 @@ $clientes = cargar_clientes($conn, $search);
                             </div>
                             <div class="col-md-3">
                                 <div class="form-floating">
-                                    <input type="password" name="password" class="form-control" id="floatingPassword"
+                                    <input type="password" name="contrasena" class="form-control" id="floatingPassword"
                                         placeholder="Contraseña" required>
                                     <label for="floatingPassword">Contraseña</label>
                                 </div>
@@ -247,7 +247,7 @@ $clientes = cargar_clientes($conn, $search);
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('searchInput').addEventListener('input', function () {
+        document.getElementById('searchInput').addEventListener('input', function() {
             const filter = this.value.toLowerCase();
             const tableRows = document.querySelectorAll('#clientesTable tbody tr');
 

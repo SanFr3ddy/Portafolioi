@@ -323,7 +323,7 @@ error_reporting(E_ALL);
                             <a class="nav-link" href="Inicio.php">Inicio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="Venta.php">Venta</a>
+                            <a class="nav-link active" href="Venta.php">Venta</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="Pendientes.php">Pendientes</a>
@@ -470,7 +470,7 @@ error_reporting(E_ALL);
                     <div id="customerResults" class="list-group mt-2"></div>
                 </div>
                 <hr>
-                <form id="customerForm">
+                <form id="customerForm" method="POST" action="agregar_cliente.php">
                     <input type="hidden" id="customerId" name="customerId">
                     <div class="mb-3">
                         <label for="customerName" class="form-label">Nombre</label>
@@ -478,17 +478,17 @@ error_reporting(E_ALL);
                     </div>
                     <div class="mb-3">
                         <label for="customerPhone" class="form-label">Teléfono</label>
-                        <input type="tel" class="form-control" id="customerPhone" name="customerPhone">
+                        <input type="tel" class="form-control" id="customerPhone" name="customerPhone" required>
                     </div>
                     <div class="mb-3">
                         <label for="customerAddress" class="form-label">Dirección</label>
-                        <textarea class="form-control" id="customerAddress" name="customerAddress"></textarea>
+                        <textarea class="form-control" id="customerAddress" name="customerAddress" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Guardar Cliente</button>
                 </form>
                 <hr>
                 <div>
-                <h2>Total del Carrito: $<span id="total-general">0.00</span></h2>
+                    <h2>Total del Carrito: $<span id="total-general">0.00</span></h2>
 
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" id="isPending" name="isPending">
@@ -512,50 +512,53 @@ error_reporting(E_ALL);
     <script src="../JS/clientes.js"></script>
     <script src="../JS/productos.js"></script>
     <script src="../JS/calcular.js"></script>
-   <script>
-    document.getElementById('processPaymentButton').addEventListener('click', function() {
-    // Obtener los productos del carrito
-    const cartItems = []; // Aquí debes obtener los elementos del carrito
-    const total = document.getElementById('total-general').innerText; // Total del carrito
-    const customerId = document.getElementById('customerId').value; // ID del cliente
+    <script>
+        document.getElementById('processPaymentButton').addEventListener('click', function() {
+            // Obtener los productos del carrito
+            const cartItems = []; // Aquí debes obtener los elementos del carrito
+            const total = document.getElementById('total-general').innerText; // Total del carrito
+            const customerId = document.getElementById('customerId').value; // ID del cliente
 
-    // Recopilar los datos de los productos en el carrito
-    document.querySelectorAll('#cart-items .cart-item').forEach(item => {
-        const productId = item.getAttribute('data-product-id'); // Asegúrate de tener un atributo data-product-id
-        const quantity = item.querySelector('.quantity').value; // Asegúrate de tener un campo para la cantidad
-        cartItems.push({ productId, quantity });
-    });
+            // Recopilar los datos de los productos en el carrito
+            document.querySelectorAll('#cart-items .cart-item').forEach(item => {
+                const productId = item.getAttribute('data-product-id'); // Asegúrate de tener un atributo data-product-id
+                const quantity = item.querySelector('.quantity').value; // Asegúrate de tener un campo para la cantidad
+                cartItems.push({
+                    productId,
+                    quantity
+                });
+            });
 
-    // Crear el objeto de datos a enviar
-    const data = {
-        customerId: customerId,
-        total: total,
-        items: cartItems
-    };
+            // Crear el objeto de datos a enviar
+            const data = {
+                customerId: customerId,
+                total: total,
+                items: cartItems
+            };
 
-    // Enviar los datos al servidor
-    fetch('ruta/a/tu/endpoint/para/procesar/pago.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Pago procesado con éxito');
-            // Aquí puedes redirigir o limpiar el carrito
-        } else {
-            alert('Error al procesar el pago: ' + data.error);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error al procesar el pago');
-    });
-});
-   </script>
+            // Enviar los datos al servidor
+            fetch('ruta/a/tu/endpoint/para/procesar/pago.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Pago procesado con éxito');
+                        // Aquí puedes redirigir o limpiar el carrito
+                    } else {
+                        alert('Error al procesar el pago: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al procesar el pago');
+                });
+        });
+    </script>
 </body>
 
 

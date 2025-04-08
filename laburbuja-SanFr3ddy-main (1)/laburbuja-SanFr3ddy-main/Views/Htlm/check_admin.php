@@ -1,6 +1,6 @@
 <?php
 function is_admin() {
-    return isset($_SESSION['rol']) && $_SESSION['rol'] == 'admin';
+    return isset($_SESSION['rol']) && $_SESSION['rol'] == 'Admin';
 }
 
 function require_admin() {

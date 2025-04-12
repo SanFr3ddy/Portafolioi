@@ -1,46 +1,101 @@
 <?php
-// corte_dia.php
-require_once 'db.php';
 session_start();
+require_once 'db.php';
 
 header('Content-Type: application/json');
-$response = ['success' => false, 'error' => ''];
 
 try {
-    // Consulta para obtener todas las ventas del día
-    $sql = "SELECT v.id, v.fecha, v.total FROM ventas v WHERE DATE(v.fecha) = CURDATE()";
-    $result = $conn->query($sql);
+    // Obtener las órdenes pendientes con nombres de cliente y tipo
+    $sqlPendientes = "SELECT 
+                        o.id, 
+                        c.nombre AS cliente, 
+                        t.nombre AS tipo, 
+                        o.estado, 
+                        o.proceso, 
+                        o.total, 
+                        o.fecha_creacion 
+                      FROM orden o
+                      JOIN clientes c ON o.cliente_id = c.id_cliente
+                      JOIN tipos_orden t ON o.tipo_id = t.id_tipo
+                      WHERE o.proceso = 'pendiente'";
+    $resultPendientes = $conn->query($sqlPendientes);
 
-    if (!$result) {
-        throw new Exception("Error en la consulta: " . $conn->error);
+    // Obtener las órdenes pagadas con nombres de cliente y tipo
+    $sqlPagadas = "SELECT 
+                    o.id, 
+                    c.nombre AS cliente, 
+                    t.nombre AS tipo, 
+                    o.estado, 
+                    o.proceso, 
+                    o.total, 
+                    o.fecha_creacion 
+                   FROM orden o
+                   JOIN clientes c ON o.cliente_id = c.id_cliente
+                   JOIN tipos_orden t ON o.tipo_id = t.id_tipo
+                   WHERE o.estado = 'pagado'";
+    $resultPagadas = $conn->query($sqlPagadas);
+
+    // Calcular el total de pagos
+    $sqlTotalPagos = "SELECT SUM(total) AS total_pagos FROM orden WHERE estado = 'pagado'";
+    $resultTotalPagos = $conn->query($sqlTotalPagos);
+    $totalPagos = $resultTotalPagos->fetch_assoc()['total_pagos'];
+
+    // Crear una carpeta para el mes actual
+    $mesActual = date('F_Y'); // Ejemplo: "April_2025"
+    $carpeta = "../Cortes/$mesActual";
+    if (!is_dir($carpeta)) {
+        mkdir($carpeta, 0777, true);
     }
 
-    // Verifica si hay ventas
-    if ($result->num_rows > 0) {
-        // Generar el contenido del archivo
-        $contenido = "CORTE DE CAJA - LAVANDERÍA LA BURBUJA\n";
-        $contenido .= "Fecha de corte: " . date('Y-m-d H:i:s') . "\n";
-        $contenido .= "----------------------------------------\n";
+    // Crear el contenido del archivo
+    $contenido = "Corte del Día - " . date('Y-m-d') . "\n\n";
 
-        while ($row = $result->fetch_assoc()) {
-            $contenido .= sprintf("ID: %d, Fecha: %s, Total: $%.2f\n", $row['id'], $row['fecha'], $row['total']);
-        }
+    // Encabezado de la tabla de órdenes pendientes
+    $contenido .= "Órdenes Pendientes:\n";
+    $contenido .= sprintf("%-5s %-20s %-20s %-10s %-10s %-10s %-20s\n", "ID", "Cliente", "Tipo", "Estado", "Proceso", "Total", "Fecha");
+    $contenido .= str_repeat("-", 95) . "\n";
 
-        // Guardar el archivo
-        $nombre_archivo = 'corte_' . date('Ymd_His') . '.txt';
-        file_put_contents('../Cortes/' . $nombre_archivo, $contenido);
-
-        // Limpiar la tabla de ventas
-        $conn->query("DELETE FROM ventas WHERE DATE(fecha) = CURDATE()");
-
-        $response['success'] = true;
-        $response['filename'] = $nombre_archivo;
-    } else {
-        $response['error'] = 'No hay ventas para procesar.';
+    while ($row = $resultPendientes->fetch_assoc()) {
+        $contenido .= sprintf(
+            "%-5s %-20s %-20s %-10s %-10s $%-9.2f %-20s\n",
+            $row['id'],
+            substr($row['cliente'], 0, 20), // Limitar el nombre del cliente a 20 caracteres
+            substr($row['tipo'], 0, 20),    // Limitar el tipo a 20 caracteres
+            $row['estado'],
+            $row['proceso'],
+            $row['total'],
+            $row['fecha_creacion']
+        );
     }
+
+    $contenido .= "\nÓrdenes Pagadas:\n";
+    $contenido .= sprintf("%-5s %-20s %-20s %-10s %-10s %-10s %-20s\n", "ID", "Cliente", "Tipo", "Estado", "Proceso", "Total", "Fecha");
+    $contenido .= str_repeat("-", 95) . "\n";
+
+    while ($row = $resultPagadas->fetch_assoc()) {
+        $contenido .= sprintf(
+            "%-5s %-20s %-20s %-10s %-10s $%-9.2f %-20s\n",
+            $row['id'],
+            substr($row['cliente'], 0, 20), // Limitar el nombre del cliente a 20 caracteres
+            substr($row['tipo'], 0, 20),    // Limitar el tipo a 20 caracteres
+            $row['estado'],
+            $row['proceso'],
+            $row['total'],
+            $row['fecha_creacion']
+        );
+    }
+
+    $contenido .= "\nTotal de Pagos: $" . number_format($totalPagos, 2) . "\n";
+
+    // Guardar el archivo en la carpeta del mes actual
+    $nombreArchivo = 'Corte_' . date('Y-m-d_H-i-s') . '.txt';
+    $rutaArchivo = $carpeta . '/' . $nombreArchivo;
+
+    file_put_contents($rutaArchivo, $contenido);
+
+    // Responder con el nombre del archivo generado
+    echo json_encode(['success' => true, 'filename' => "$mesActual/$nombreArchivo"]);
 } catch (Exception $e) {
-    $response['error'] = $e->getMessage();
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
-
-echo json_encode($response);
 ?>

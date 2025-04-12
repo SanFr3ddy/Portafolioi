@@ -8,14 +8,7 @@ if (isset($_GET['id'])) {
     $id_cliente = intval($_GET['id']);
 
     // Primero, elimina las órdenes relacionadas
-    $sql = "DELETE o FROM ordenes o
-            WHERE o.cliente_id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id_cliente);
-    $stmt->execute();
-
-    // Luego, elimina las ventas relacionadas
-    $sql = "DELETE FROM ventas WHERE orden_id IN (SELECT id FROM ordenes WHERE cliente_id = ?)";
+    $sql = "DELETE FROM orden WHERE cliente_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id_cliente);
     $stmt->execute();
@@ -26,7 +19,7 @@ if (isset($_GET['id'])) {
     $stmt->bind_param("i", $id_cliente);
 
     if ($stmt->execute()) {
-        $_SESSION['success'] = "Cliente, ventas, órdenes y pendientes eliminados correctamente";
+        $_SESSION['success'] = "Cliente y órdenes relacionadas eliminados correctamente.";
     } else {
         $_SESSION['error'] = "Error al eliminar el cliente: " . $stmt->error;
     }
@@ -34,7 +27,7 @@ if (isset($_GET['id'])) {
     header("Location: Usuarios.php");
     exit();
 } else {
-    $_SESSION['error'] = "ID de cliente no proporcionado";
+    $_SESSION['error'] = "ID de cliente no proporcionado.";
     header("Location: Usuarios.php");
     exit();
 }

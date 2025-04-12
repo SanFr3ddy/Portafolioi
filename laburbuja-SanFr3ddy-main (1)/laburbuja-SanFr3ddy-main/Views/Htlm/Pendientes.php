@@ -21,6 +21,51 @@ ini_set('display_errors', 1);
 
 <body>
     <main>
+        <div class="modal fade" id="modalEstado" tabindex="-1" aria-labelledby="modalEstadoLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEstadoLabel">Modificar Estado, Método de Pago y Proceso</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formEstado">
+                            <input type="hidden" id="ordenIdEstado" name="ordenIdEstado">
+                            <div class="mb-3">
+                                <label for="estadoOrden" class="form-label">Estado</label>
+                                <select class="form-select" id="estadoOrden" name="estadoOrden" required>
+                                    <option value="" disabled selected>Seleccione un estado</option>
+                                    <option value="Pendiente">Pendiente</option>
+                                    <option value="Pagado">Pagado</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="metodoPago" class="form-label">Método de Pago</label>
+                                <select class="form-select" id="metodoPago" name="metodoPago">
+                                    <option value="" disabled selected>Seleccione un método de pago</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Transferencia">Transferencia</option>
+                                    <option value="Clip">Clip</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="procesoOrden" class="form-label">Proceso</label>
+                                <select class="form-select" id="procesoOrden" name="procesoOrden">
+                                    <option value="" disabled selected>Seleccione un proceso</option>
+                                    <option value="pendiente">Pendiente</option>
+                                    <option value="terminado">Terminado</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" onclick="guardarEstado()">Guardar Cambios</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
@@ -67,96 +112,115 @@ ini_set('display_errors', 1);
         <div class="container mt-4">
             <div class="card">
                 <div class="card-header">
-                    <h2>Servicios Pendientes</h2>
+                    <h2>Órdenes Pendientes</h2>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>ID Orden</th>
-                                    <th>ID Servicio</th>
-                                    <th>Estado</th>
-                                    <th>Fecha</th>
+                                    <th>Cliente</th>
+                                    <th>Tipo</th>
+                                    <th>Pago</th>
+                                    <th>Medio</th>
+                                    <th>Proceso</th>
+                                    <th>Total</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                // Definir la consulta SQL
-                                $sql = "SELECT * FROM pendientes_servicios WHERE estado = 'pendiente'";
+                                $sqlPendientes = "SELECT 
+        o.id AS orden_id,
+        c.nombre AS cliente,
+        t.nombre AS tipo,
+        o.estado,
+        o.metodo_pago,
+        o.proceso,
+        o.total
+    FROM orden o
+    JOIN clientes c ON o.cliente_id = c.id_cliente
+    JOIN tipos_orden t ON o.tipo_id = t.id_tipo
+    WHERE o.proceso = 'pendiente'";
+                                $resultPendientes = $conn->query($sqlPendientes);
 
-                                // Ejecutar la consulta
-                                $result = $conn->query($sql);
-                                if ($result === false) {
+                                if ($resultPendientes === false) {
                                     echo "Error en la consulta: " . $conn->error;
                                     exit;
                                 }
 
-                                // Mostrar los resultados
-                                while ($row = $result->fetch_assoc()) {
+                                while ($row = $resultPendientes->fetch_assoc()) {
                                     echo "<tr>
-                                        <td>{$row['id']}</td>
-                                        <td>{$row['orden_id']}</td>
-                                        <td>{$row['servicio_id']}</td>
-                                        <td>{$row['estado']}</td>
-                                        <td>" . date('d/m/Y H:i', strtotime($row['fecha'])) . "</td>
-                                        <td>
-                                            <button class='btn btn-success btn-sm' onclick='marcarCompletado({$row['id']})'>Completado</button>
-                                        </td>
-                                    </tr>";
+            <td>{$row['cliente']}</td>
+            <td>{$row['tipo']}</td>
+            <td>{$row['estado']}</td>
+            <td>{$row['metodo_pago']}</td>
+            <td>{$row['proceso']}</td>
+            <td>$" . number_format($row['total'], 2) . "</td>
+            <td>
+                <button class='btn btn-primary btn-sm' onclick='marcarTerminado({$row['orden_id']})'>Marcar como Terminado</button>
+            </td>
+        </tr>";
                                 }
                                 ?>
-                            </tbody>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
+            <!-- Tabla de órdenes terminadas -->
             <div class="card mt-4">
                 <div class="card-header">
-                    <h2>Pendientes en Dinero</h2>
+                    <h2>Órdenes Terminadas</h2>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>ID Venta</th>
-                                    <th>ID Cliente</th>
-                                    <th>ID Orden</th>
-                                    <th>Monto</th>
-                                    <th>Fecha de Ingreso</th>
+                                    <th>Cliente</th>
+                                    <th>Tipo</th>
+                                    <th>Pago</th>
+                                    <th>Medio</th>
+                                    <th>Proceso</th>
+                                    <th>Total</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            <?php
-                                // Definir la consulta SQL
-                                $sqlDinero = "SELECT * FROM pendientes_dinero";
+                                <?php
+                                $sqlTerminadas = "SELECT 
+                                    o.id AS orden_id,
+                                    c.nombre AS cliente,
+                                    t.nombre AS tipo,
+                                    o.estado,
+                                    o.metodo_pago,
+                                    o.proceso,
+                                    o.total
+                                FROM orden o
+                                JOIN clientes c ON o.cliente_id = c.id_cliente
+                                JOIN tipos_orden t ON o.tipo_id = t.id_tipo
+                                WHERE o.proceso = 'terminado' AND o.estado != 'pagado'";
+                                $resultTerminadas = $conn->query($sqlTerminadas);
 
-                                // Ejecutar la consulta
-                                $resultDinero = $conn->query($sqlDinero);
-                                if ($resultDinero === false) {
+                                if ($resultTerminadas === false) {
                                     echo "Error en la consulta: " . $conn->error;
                                     exit;
                                 }
 
-                                // Mostrar los resultados
-                                while ($row = $resultDinero->fetch_assoc()) {
+                                while ($row = $resultTerminadas->fetch_assoc()) {
                                     echo "<tr>
-                                        <td>{$row['id']}</td>
-                                        <td>{$row['cliente_id']}</td>
-                                        <td>{$row['orden_id']}</td>
-                                        <td>{$row['monto']}</td>
-                                        <td>{$row['fecha']}</td>
-                                        <td>
-                                            <a href='editar_pendiente_dinero.php?id={$row['id']}' class='btn btn-warning'>Editar</a>
-                                            <a href='eliminar_pendiente_dinero.php?id={$row['id']}' class='btn btn-danger'>Eliminar</a>
-                                        </td>
-                                    </tr>";
+                            <td>{$row['cliente']}</td>
+                            <td>{$row['tipo']}</td>
+                            <td>{$row['estado']}</td>
+                            <td>{$row['metodo_pago']}</td>
+                            <td>{$row['proceso']}</td>
+                            <td>$" . number_format($row['total'], 2) . "</td>
+                            <td>
+                                <button class='btn btn-success btn-sm' onclick='abrirModalEstado({$row["orden_id"]}, \"{$row["estado"]}\")'>Pagar</button>
+                            </td>
+                        </tr>";
                                 }
                                 ?>
                             </tbody>
@@ -169,30 +233,109 @@ ini_set('display_errors', 1);
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-       function marcarCompletado(id) {
-    if (confirm('¿Estás seguro de marcar este servicio como completado?')) {
-        fetch('marcar_completado.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ id: id })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Servicio marcado como completado.');
-                location.reload(); // Recargar la página para ver los cambios
-            } else {
-                alert('Error al marcar como completado: ' + data.error);
+        function marcarPagado(id) {
+            if (confirm('¿Estás seguro de marcar esta orden como pagada?')) {
+                fetch('actualizar_estado.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id: id,
+                            estado: 'pagado'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Orden marcada como pagada.');
+                            location.reload(); // Recargar la página para ver los cambios
+                        } else {
+                            alert('Error al marcar como pagada: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error al procesar la solicitud');
+                    });
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al procesar la solicitud');
-        });
-    }
-}
+        }
+
+        function marcarTerminado(id) {
+            if (confirm('¿Estás seguro de marcar esta orden como terminada?')) {
+                fetch('actualizar_estado.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id: id,
+                            proceso: 'terminado' // Solo se actualiza el proceso
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Orden marcada como terminada.');
+                            location.reload(); // Recargar la página para ver los cambios
+                        } else {
+                            alert('Error al marcar como terminada: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error al procesar la solicitud');
+                    });
+            }
+        }
+    </script>
+    <!-- modal de pago -->
+    <script>
+        function abrirModalEstado(id, estadoActual, metodoPagoActual) {
+            document.getElementById('ordenIdEstado').value = id; // Establecer el ID de la orden en el modal
+            document.getElementById('estadoOrden').value = estadoActual; // Establecer el estado actual
+            document.getElementById('metodoPago').value = metodoPagoActual; // Establecer el método de pago actual
+            const modal = new bootstrap.Modal(document.getElementById('modalEstado'));
+            modal.show();
+        }
+
+        function guardarEstado() {
+            const id = document.getElementById('ordenIdEstado').value;
+            const nuevoEstado = document.getElementById('estadoOrden').value;
+            const nuevoMetodoPago = document.getElementById('metodoPago').value;
+            const nuevoProceso = document.getElementById('procesoOrden').value;
+
+            if (!nuevoEstado) {
+                alert('Por favor, seleccione un estado.');
+                return;
+            }
+
+            fetch('actualizar_estado.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        estado: nuevoEstado,
+                        metodo_pago: nuevoMetodoPago,
+                        proceso: nuevoProceso
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Estado, método de pago y proceso actualizados correctamente.');
+                        location.reload(); // Recargar la página para ver los cambios
+                    } else {
+                        alert('Error al actualizar: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al procesar la solicitud');
+                });
+        }
     </script>
 </body>
 

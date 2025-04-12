@@ -1,38 +1,50 @@
 <?php
-session_start();
-include 'db.php';
+require_once 'db.php';
 
-// Verificar si se enviaron todos los campos
-if (isset($_POST['customerName'], $_POST['customerPhone'], $_POST['customerAddress'], $_POST['customerState']) &&
-    !empty($_POST['customerName']) &&
-    !empty($_POST['customerPhone']) &&
-    !empty($_POST['customerAddress']) &&
-    !empty($_POST['customerState'])) {
+header('Content-Type: application/json');
 
-    $nombre = trim($_POST['customerName']);
-    $telefono = trim($_POST['customerPhone']);
-    $direccion = trim($_POST['customerAddress']);
-    $estado = trim($_POST['customerState']); // Nuevo campo para el estado
-
-    // Insertar el nuevo cliente en la base de datos
-    $sql = "INSERT INTO clientes (nombre, telefono, direccion, estado) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssss", $nombre, $telefono, $direccion, $estado);
-
-    if ($stmt->execute()) {
-        $_SESSION['success'] = "Cliente agregado correctamente.";
-    } else {
-        $_SESSION['error'] = "Error al agregar el cliente: " . $stmt->error;
+try {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Método no permitido.');
     }
 
-    $stmt->close();
-} else {
-    $_SESSION['error'] = "Todos los campos son requeridos.";
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if (!$data) {
+        throw new Exception('No se recibieron datos.');
+    }
+
+    $nombre = trim($data['customerName']);
+    $telefono = trim($data['customerPhone']);
+    $direccion = trim($data['customerAddress']);
+
+    if (empty($nombre) || empty($telefono) || empty($direccion)) {
+        throw new Exception('Todos los campos son obligatorios.');
+    }
+
+    // Verificar si el cliente ya existe
+    $stmt = $conn->prepare("SELECT id_cliente FROM clientes_listado WHERE nombre = ? AND telefono = ?");
+    $stmt->bind_param("ss", $nombre, $telefono);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        throw new Exception('El cliente ya existe.');
+    }
+
+    // Insertar nuevo cliente
+    $stmt = $conn->prepare("INSERT INTO clientes_listado (nombre, telefono, direccion, estado) VALUES (?, ?, ?, 'activo')");
+    if (!$stmt) {
+        throw new Exception('Error en la preparación de la consulta: ' . $conn->error);
+    }
+    $stmt->bind_param("sss", $nombre, $telefono, $direccion);
+
+    if (!$stmt->execute()) {
+        throw new Exception('Error al guardar el cliente: ' . $stmt->error);
+    }
+
+    echo json_encode(['success' => true, 'message' => 'Cliente guardado correctamente.']);
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
-
-$conn->close();
-
-// Redirigir de vuelta a la página de ventas
-header("Location: Venta.php");
-exit();
 ?>

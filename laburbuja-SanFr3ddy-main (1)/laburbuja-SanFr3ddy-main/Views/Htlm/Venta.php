@@ -32,6 +32,8 @@ error_reporting(E_ALL);
 <body>
     <main>
         <!-- MODALES -->
+       
+        <!-- modale de servicio completo -->
         <div class="modal fade" id="Servicio" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
@@ -52,12 +54,11 @@ error_reporting(E_ALL);
                             </div>
                             <div class="right_modal">
                                 <form id="form-servicio-completo">
-                                    <input type="hidden" id="servicio-id" value="1"> <!-- ID del servicio completo -->
-                                    <input type="hidden" id="servicio-precio" value="30">
+                                    <input type="hidden" id="servicio-id" value="1"> <!-- ID del producto "Servicio Completo" -->
+                                    <input type="hidden" id="servicio-precio" value="30"> <!-- Precio por kilo -->
                                     <div class="mb-3">
                                         <label for="kilos" class="form-label">Kilos de ropa</label>
-                                        <input type="number" class="form-control" id="kilos" min="0.5" step="0.5"
-                                            value="1">
+                                        <input type="number" class="form-control" id="kilos" min="0.5" step="0.5" value="1">
                                     </div>
                                     <div class="mb-3">
                                         <h4>Total: $<span id="total-servicio">30.00</span></h4>
@@ -233,12 +234,8 @@ error_reporting(E_ALL);
                                         <form id="form">
                                             <h5>TIPO</h5>
                                             <input type="text" id="tipo-tintoreria" placeholder="Saco">
-                                            <h5>COSTO</h5>
-                                            <input type="number" id="costo-tintoreria" value="1">
                                             <h5>CANTIDAD</h5>
                                             <input type="number" id="cantidad-tintoreria" value="0">
-                                            <h5>COLOR</h5>
-                                            <input type="color" id="color-tintoreria">
                                         </form>
                                     </div>
                                 </div>
@@ -356,7 +353,7 @@ error_reporting(E_ALL);
         <!-- Proximamente contenido publicitario debajo -->
         <div class="container">
             <div class="products">
-                <h2>Productos</h2>
+                <h1>Productos</h1>
                 <hr>
                 <div id="product-buttons">
                     <div class="card">
@@ -457,12 +454,12 @@ error_reporting(E_ALL);
             </div>
 
             <div class="cart">
-                <h2>Carrito de Compras</h2>
+                <h1>Carrito de Compras</h1>
                 <hr>
                 <div id="cart-items"></div>
             </div>
             <id class="checkout">
-                <h2>Información del Cliente</h2>
+                <h1>Información del Cliente</h1>
                 <hr>
                 <div id="cart-items"></div>
                 <div class="mb-3">
@@ -470,7 +467,7 @@ error_reporting(E_ALL);
                     <div id="customerResults" class="list-group mt-2"></div>
                 </div>
                 <hr>
-                <form id="customerForm" method="POST" action="agregar_cliente.php">
+                <form id="customerForm">
                     <input type="hidden" id="customerId" name="customerId">
                     <div class="mb-3">
                         <label for="customerName" class="form-label">Nombre</label>
@@ -478,24 +475,37 @@ error_reporting(E_ALL);
                     </div>
                     <div class="mb-3">
                         <label for="customerPhone" class="form-label">Teléfono</label>
-                        <input type="tel" class="form-control" id="customerPhone" name="customerPhone" required>
+                        <input type="tel" class="form-control" id="customerPhone" name="customerPhone">
                     </div>
                     <div class="mb-3">
                         <label for="customerAddress" class="form-label">Dirección</label>
-                        <textarea class="form-control" id="customerAddress" name="customerAddress" required></textarea>
+                        <textarea class="form-control" id="customerAddress" name="customerAddress"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Guardar Cliente</button>
                 </form>
                 <hr>
                 <div>
-                    <h2>Total del Carrito: $<span id="total-general">0.00</span></h2>
-
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="isPending" name="isPending">
-                        <label class="form-check-label" for="isPending">Pendiente</label>
+                    <h3>Total del Carrito: <h2>$<span id="total-general">0.00</h2></span></h3>
+                    <div class="mb-3">
+                        <label for="estadoPago" class="form-label">Estado de Pago</label>
+                        <select class="form-select" id="estadoPago" required>
+                            <option value="" disabled selected>Seleccione el estado</option>
+                            <option value="pagado">Pagado</option>
+                            <option value="pendiente">Pendiente</option>
+                        </select>
                     </div>
-
-                    <button id="processPaymentButton" class="btn btn-success">Procesar Pago</button>
+                    <div class="mb-3">
+                        <label for="metodoPago" class="form-label">Método de Pago</label>
+                        <select class="form-select" id="metodoPago" required>
+                            <option value="" disabled selected>Seleccione el método</option>
+                            <option value="efectivo">Efectivo</option>
+                            <option value="tarjeta">Tarjeta</option>
+                            <option value="transferencia">Transferencia</option>
+                        </select>
+                    </div>  
+                    <button id="processPaymentButton" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalProcesarOrden">
+                        Procesar
+                    </button>
                 </div>
         </div>
     </main>
@@ -509,57 +519,251 @@ error_reporting(E_ALL);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
         integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
         crossorigin="anonymous"></script>
-    <script src="../JS/clientes.js"></script>
+    <!-- Scripts para la funcion del carrito -->
+
+    <script src="../JS/carrito.js"></script>
     <script src="../JS/productos.js"></script>
-    <script src="../JS/calcular.js"></script>
+
     <script>
-        document.getElementById('processPaymentButton').addEventListener('click', function() {
-            // Obtener los productos del carrito
-            const cartItems = []; // Aquí debes obtener los elementos del carrito
-            const total = document.getElementById('total-general').innerText; // Total del carrito
-            const customerId = document.getElementById('customerId').value; // ID del cliente
+        document.getElementById('processPaymentButton').addEventListener('click', () => {
+            if (carrito.length === 0) {
+                alert('El carrito está vacío. Agrega productos antes de procesar la orden.');
+                return;
+            }
 
-            // Recopilar los datos de los productos en el carrito
-            document.querySelectorAll('#cart-items .cart-item').forEach(item => {
-                const productId = item.getAttribute('data-product-id'); // Asegúrate de tener un atributo data-product-id
-                const quantity = item.querySelector('.quantity').value; // Asegúrate de tener un campo para la cantidad
-                cartItems.push({
-                    productId,
-                    quantity
-                });
-            });
+            // Abrir el modal
+            const modal = new bootstrap.Modal(document.getElementById('modalProcesarOrden'));
+            modal.show();
+        });
+        document.getElementById('processPaymentButton').addEventListener('click', () => {
+            const customerId = document.getElementById('customerId').value;
 
-            // Crear el objeto de datos a enviar
-            const data = {
-                customerId: customerId,
-                total: total,
-                items: cartItems
-            };
+            if (!customerId) {
+                alert('Por favor, selecciona un cliente.');
+                return;
+            }
+
+            if (carrito.length === 0) {
+                alert('El carrito está vacío.');
+                return;
+            }
 
             // Enviar los datos al servidor
-            fetch('ruta/a/tu/endpoint/para/procesar/pago.php', {
+            fetch('procesar_orden.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify({
+                        customerId: customerId,
+                        items: carrito
+                    })
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Pago procesado con éxito');
-                        // Aquí puedes redirigir o limpiar el carrito
+                        alert('Orden procesada correctamente.');
+                        carrito = [];
+                        actualizarCarrito();
                     } else {
-                        alert('Error al procesar el pago: ' + data.error);
+                        alert('Error al procesar la orden: ' + data.error);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error al procesar el pago');
+                });
+        });
+
+        function marcarPagado(id) {
+            if (confirm('¿Estás seguro de marcar esta orden como pagada?')) {
+                fetch('actualizar_estado.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id: id,
+                            estado: 'pagado'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Orden marcada como pagada.');
+                            location.reload(); // Recargar la página para ver los cambios
+                        } else {
+                            alert('Error al marcar como pagada: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error al procesar la solicitud');
+                    });
+            }
+        }
+
+        function marcarTerminado(id) {
+            if (confirm('¿Estás seguro de marcar esta orden como terminada?')) {
+                fetch('actualizar_estado.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id: id,
+                            proceso: 'terminado'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Orden marcada como terminada.');
+                            location.reload(); // Recargar la página para ver los cambios
+                        } else {
+                            alert('Error al marcar como terminada: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error al procesar la solicitud');
+                    });
+            }
+        }
+    </script>
+    <!-- buscador de clienets -->
+    <script>
+        document.getElementById('searchCustomer').addEventListener('input', function() {
+            const term = this.value.trim();
+
+            if (term.length < 2) {
+                document.getElementById('customerResults').innerHTML = '';
+                return;
+            }
+
+            fetch(`buscar_cliente.php?term=${encodeURIComponent(term)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsContainer = document.getElementById('customerResults');
+                    resultsContainer.innerHTML = '';
+
+                    if (data.error) {
+                        console.error(data.error);
+                        return; // No mostrar alertas, solo registrar el error en la consola
+                    }
+
+                    data.forEach(cliente => {
+                        const item = document.createElement('a');
+                        item.href = '#';
+                        item.className = 'list-group-item list-group-item-action';
+                        item.textContent = cliente.nombre;
+                        item.addEventListener('click', () => {
+                            document.getElementById('customerId').value = cliente.id_cliente;
+                            document.getElementById('customerName').value = cliente.nombre;
+                            document.getElementById('customerPhone').value = cliente.telefono || '';
+                            document.getElementById('customerAddress').value = cliente.direccion || '';
+                            resultsContainer.innerHTML = ''; // Limpiar resultados
+                        });
+                        resultsContainer.appendChild(item);
+                    });
+                })
+                .catch(error => console.error('Error al buscar clientes:', error)); // Solo registrar el error en la consola
+        });
+    </script>
+    <!-- para guardar clientes -->
+    <script>
+        document.getElementById('customerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const customerName = document.getElementById('customerName').value;
+            const customerPhone = document.getElementById('customerPhone').value;
+            const customerAddress = document.getElementById('customerAddress').value;
+
+            if (!customerName || !customerPhone || !customerAddress) {
+                alert('Por favor, completa todos los campos.');
+                return;
+            }
+
+            fetch('agregar_cliente.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        customerName: customerName,
+                        customerPhone: customerPhone,
+                        customerAddress: customerAddress
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        document.getElementById('customerForm').reset();
+                    } else {
+                        alert('Error: ' + data.error); // Mostrar mensaje si el cliente ya existe
+                    }
+                })
+                .catch(error => console.error('Error al guardar el cliente:', error));
+        });
+    </script>
+    <script>
+               document.getElementById('processPaymentButton').addEventListener('click', () => {
+            const customerId = document.getElementById('customerId').value;
+            const estadoPago = document.getElementById('estadoPago').value;
+            const metodoPago = document.getElementById('metodoPago').value;
+        
+            if (!customerId) {
+                alert('Por favor, selecciona un cliente.');
+                return;
+            }
+        
+            if (!estadoPago || !metodoPago) {
+                alert('Por favor, selecciona el estado de pago y el método de pago.');
+                return;
+            }
+        
+            if (carrito.length === 0) {
+                alert('El carrito está vacío. Agrega productos antes de procesar la orden.');
+                return;
+            }
+        
+            const payload = {
+                customerId: customerId,
+                estado: estadoPago,
+                metodo_pago: metodoPago,
+                total: parseFloat(document.getElementById('total-general').textContent),
+                items: carrito
+            };
+        
+            console.log('Datos enviados al servidor:', payload);
+        
+            // Enviar los datos al servidor
+            fetch('procesar_orden.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Respuesta del servidor:', data);
+                    if (data.success) {
+                        alert('Orden procesada correctamente.');
+                        carrito = []; // Vaciar el carrito
+                        actualizarCarrito(); // Actualizar visualmente
+                        location.reload(); // Recargar la página
+                    } else {
+                        alert('Error al procesar la orden: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al procesar la solicitud.');
                 });
         });
     </script>
+    <!-- carrito -->
 </body>
-
 
 </html>

@@ -7,13 +7,11 @@ const pages = document.querySelectorAll('.page');
 const filterBtn = document.querySelectorAll('.filter-item');
 const itemCategory = document.querySelectorAll('.item-category');
 
-/*Slidebar Toggle*/ 
 
 menuToggler.addEventListener('click', function(){
     sideBar.classList.toggle('active');
 })
 
-/* Page Navigation Functionality */
 
 for(let i = 0; i < navItemLinks.length; i++){
     navItemLinks[i].addEventListener('click', function(){
@@ -32,7 +30,6 @@ for(let i = 0; i < navItemLinks.length; i++){
     });
 }
 
-/* Adding eventlistener in filter buttons */
 
 for(let i = 0; i < filterBtn.length; i++){
     filterBtn[i].addEventListener('click', function(){

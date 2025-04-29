@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 :root{
-    /*Background Colors*/
     --background-dark-100: #000000;
     --background-dark-90: #222222;
     --background-dark-95: #282828;
@@ -10,14 +9,12 @@
     --background-dark-60: #aaaaaa;
     --background-orange: #ff4a4a;
 
-    /*Text colors*/
     --color-white-100: #ffffff;
     --color-white-95: #f5f5f5;
     --color-white-80: #d5d5d5;
     --color-white-70: #444444;
     --color-white-60: #aaaaaa;
     
-    /*Font Size*/
     --font-size-48: 48px;
     --font-size-30: 30px;
     --font-size-24: 24px;
@@ -32,7 +29,6 @@
     --transition-default: 0.25s ease;
 }
 
-/*SCROLLBAR STYLE*/
 
 ::-webkit-scrollbar{
     width: 6px;
@@ -45,8 +41,6 @@
 ::-webkit-scrollbar-thumb{
     background: red;
 }
-
-/*RESET*/
 
 * {
     margin: 0;
@@ -175,8 +169,6 @@ img{
     cursor: pointer;
 }
 
-/*SIDEBAR STRUCTURE*/
-
 .side-bar{
     position: absolute;
     width: 160px;
@@ -241,7 +233,6 @@ img{
 
 .side-bar-footer .copyright{ font-size: var(--font-size-12);}
 
-/*ABOUT*/
 
 .about,
 .resume,
@@ -374,8 +365,6 @@ img{
     cursor: pointer;
 }
 
-/*RESUME SECTION*/
-
 .resume,
 .portfolio,
 .blog,
@@ -469,8 +458,6 @@ img{
     background: red;
 }
 
-/*CONTACT SECTION*/
-
 .contact-info{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -535,8 +522,6 @@ img{
     height: 170px;
     resize: none;
 }
-
-/*MEDIA QUERIES*/
 
 @media screen and (max-width: 1200px){
     .clients-row{

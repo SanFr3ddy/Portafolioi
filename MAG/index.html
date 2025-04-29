@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corazón Animado</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- Botones en las esquinas -->
+  <button id="toggle-controls" class="top-left">Controles</button>
+  <button id="toggle-fullscreen" class="top-right">Pantalla Completa</button>
+
+  <!-- Controles -->
+  <div id="controls-container">
+    <div id="controls">
+      <div class="control-group">
+        <label for="colorScheme">Colors:</label>
+        <select id="colorScheme">
+          <option value="rainbow">Rainbow</option>
+          <option value="red">Red</option>
+          <option value="green">Green</option>
+          <option value="blue">Blue</option>
+          <option value="monochrome">Monochrome</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="particleSize">Size:</label>
+        <input type="range" id="particleSize" min="1" max="20" value="10">
+        <span id="particleSizeValue">10</span>
+      </div>
+      <div class="control-group">
+        <label for="particleCount">Particles:</label>
+        <input type="range" id="particleCount" min="10" max="100" value="32">
+        <span id="particleCountValue">32</span>
+      </div>
+      <div class="control-group">
+        <label for="speed">Speed:</label>
+        <input type="range" id="speed" min="0.1" max="2" step="0.1" value="1">
+        <span id="speedValue">1</span>
+      </div>
+      <div class="control-group">
+        <label for="mouseInfluence">Mouse Follow:</label>
+        <input type="range" id="mouseInfluence" min="0" max="100" value="50">
+        <span id="mouseInfluenceValue">50</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canvas del corazón -->
+  <canvas id="c"></canvas>
+
+  <script src="./script.js"></script>
+</body>
+</html>

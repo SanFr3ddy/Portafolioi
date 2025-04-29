@@ -1,0 +1,73 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #000;
+  font-family: "Archivo Black", sans-serif;
+  color: white;
+}
+
+#c {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Canvas en el fondo */
+}
+
+/* Botones en las esquinas */
+button.top-left {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  padding: 10px 20px;
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button.top-right {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  padding: 10px 20px;
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button.top-left:hover,
+button.top-right:hover {
+  background-color: #ff4c4c;
+}
+
+/* Contenido principal */
+.main-content {
+  position: relative;
+  z-index: 10; /* Asegura que esté por encima del canvas */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+
+
+
+/* Contenedor del corazón */
+.heart-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px;
+}
+
